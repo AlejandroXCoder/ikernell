@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+</head>
+<body>
+<!-- Define el fragmento -->
+<div th:fragment="contact-buttons" class="contact-buttons-container">
+    <a href="https://teams.microsoft.com" target="_blank" class="contact-button teams-button">
+    </a>
+    <a href="mailto:contacto@ikernell.com" class="contact-button mail-button">
+    </a>
+
+    <style>
+        .contact-buttons-container {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            z-index: 1000;
+        }
+
+        .contact-button {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-size: cover;
+            background-position: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            display: block;
+        }
+
+        .contact-button:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .teams-button {
+            background-image: url([[@{/img/teams.svg}]]);
+        }
+
+        .mail-button {
+            background-image: url([[@{/img/gmail.svg}]]);
+        }
+    </style>
+</div>
+</body>
+</html>

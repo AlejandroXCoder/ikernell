@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Líder - IKernell Soluciones Software</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="icon" th:href="@{/img/logo.png}">
+    <link rel="stylesheet" th:href="@{/css/inicio.css}">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Dashboard general styles */
+.dashboard-section {
+    padding: 40px 0;
+    background-color: #f8f9fa;
+    min-height: calc(100vh - 100px);
+}
+
+.dashboard-section h1 {
+    margin-bottom: 30px;
+    color: #333;
+    text-align: center;
+}
+
+/* Greeting card */
+.greeting-card {
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.greeting-text h2 {
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.greeting-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.greeting-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.greeting-avatar i {
+    color: #6c757d;
+}
+
+/* Stats grid */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.stat-card {
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    transition: transform 0.3s;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+}
+
+.stat-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: #f0f7ff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 15px;
+}
+
+.stat-icon i {
+    font-size: 24px;
+    color: #0d6efd;
+}
+
+.stat-info h3 {
+    font-size: 16px;
+    margin-bottom: 5px;
+    color: #6c757d;
+}
+
+.stat-info p {
+    font-size: 24px;
+    font-weight: bold;
+    margin: 0;
+    color: #333;
+}
+
+/* Recent section */
+.recent-section {
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.recent-section h2 {
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.table-responsive {
+    overflow-x: auto;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table th, .table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.table thead th {
+    background-color: #f8f9fa;
+    color: #495057;
+    font-weight: bold;
+}
+
+.table tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+.status-badge {
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.status-badge.active {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.status-badge.inactive {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.btn-action {
+    color: #0d6efd;
+    margin-right: 5px;
+    transition: color 0.3s;
+}
+
+.btn-action:hover {
+    color: #0a58ca;
+}
+
+.view-all {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.btn-view-all {
+    display: inline-block;
+    padding: 8px 20px;
+    background-color: #0d6efd;
+    color: #fff;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: background-color 0.3s;
+}
+
+.btn-view-all:hover {
+    background-color: #0a58ca;
+}
+
+/* Activity status section */
+.activity-status-section {
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.activity-status-section h2 {
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.status-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+.status-card {
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.status-card h3 {
+    margin-bottom: 10px;
+    color: #495057;
+}
+
+.status-count {
+    font-size: 36px;
+    font-weight: bold;
+    margin: 0;
+    color: #333;
+}
+
+.status-icon {
+    position: absolute;
+    bottom: -15px;
+    right: -15px;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0.2;
+}
+
+.status-icon i {
+    font-size: 40px;
+    color: #0d6efd;
+}
+
+/* Quick actions section */
+.quick-actions {
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.quick-actions h2 {
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.action-buttons {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+.action-button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    text-decoration: none;
+    color: #495057;
+    transition: transform 0.3s, background-color 0.3s;
+}
+
+.action-button:hover {
+    transform: translateY(-5px);
+    background-color: #e9ecef;
+}
+
+.action-button i {
+    font-size: 30px;
+    margin-bottom: 10px;
+    color: #0d6efd;
+}
+
+.action-button span {
+    font-weight: 500;
+    text-align: center;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .greeting-card {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .greeting-avatar {
+        margin-top: 15px;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .status-cards {
+        grid-template-columns: 1fr;
+    }
+
+    .action-buttons {
+        grid-template-columns: 1fr;
+    }
+}
+
+        .charts-section {
+        padding: 20px 0;
+    }
+
+    .chart-card {
+    background: #fff;
+    border-radius: 12px; /* Bordes más suaves */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1); /* Sombra más pronunciada */
+    padding: 25px; /* Más espacio interno */
+    min-height: 400px; /* Aumentamos la altura para mejor presentación */
+    border: 1px solid #e9ecef; /* Borde sutil */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.chart-card:hover {
+    transform: translateY(-5px); /* Efecto al pasar el mouse */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+.chart-title {
+    font-size: 20px; /* Tamaño ligeramente mayor */
+    font-weight: 700; /* Más negrita */
+    margin-bottom: 25px; /* Más separación */
+    color: #2c3e50; /* Color más oscuro y profesional */
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Espacio para un ícono si lo deseas */
+}
+
+.chart-title::before {
+    content: '\f080'; /* Ícono de gráfico de Font Awesome */
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    color: #4361ee; /* Color azul del tema */
+    font-size: 18px;
+}
+
+    </style>
+</head>
+<body>
+<!-- Header -->
+<header>
+    <div class="container">
+        <div class="logo">
+            <a th:href="@{/}">
+                <img th:src="@{/img/logo.png}" alt="IKernell Logo" id="logo">
+                <span>IKernell Soluciones Software</span>
+            </a>
+        </div>
+        <nav>
+            <ul class="menu">
+                <li><a th:href="@{/lider/index}" class="active">Dashboard</a></li>
+                <li><a th:href="@{/lider/Proyectos}">Proyectos</a></li>
+                <li><a th:href="@{/lider/Desarrolladores}">Desarrolladores</a></li>
+                <li><a th:href="@{/lider/biblioteca}">Biblioteca</a></li>
+                <li><a th:href="@{/lider/perfil}">Mi Perfil</a></li>
+            </ul>
+        </nav>
+        <div class="auth-buttons">
+            <form th:action="@{/logout}" method="post">
+                <button type="submit" class="logout-btn">Cerrar sesión</button>
+            </form>
+        </div>
+    </div>
+</header>
+
+<!-- Dashboard Content -->
+<section class="dashboard-section">
+    <div class="container">
+        <h1>Dashboard de Líder</h1>
+        <div class="greeting-card">
+            <div class="greeting-text">
+                <h2 th:text="'Bienvenido, ' + ${usuario.nombre}">Bienvenido, Usuario</h2>
+                <p th:text="'Rol: ' + ${usuario.rol.nombre}">Rol: Líder</p>
+            </div>
+
+            <div class="greeting-avatar">
+                <!-- Si el usuario tiene foto, mostrarla; de lo contrario, mostrar un ícono -->
+                <img th:if="${usuario.fotoBase64 != null}" th:src="'data:image/png;base64,' + ${usuario.fotoBase64}" alt="Avatar">
+                <i th:unless="${usuario.fotoBase64 != null}" class="fa-solid fa-user-circle fa-4x"></i>
+            </div>
+
+        </div>
+
+        <!-- Estadísticas con datos reales -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fa-solid fa-folder-open"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>Total Proyectos</h3>
+                    <p th:text="${totalProyectos}">0</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fa-solid fa-laptop-code"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>Proyectos Activos</h3>
+                    <p th:text="${proyectosActivos}">0</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fa-solid fa-list-check"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>Etapas Activas</h3>
+                    <p th:text="${etapasActivas}">0</p>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fa-solid fa-tasks"></i>
+                </div>
+                <div class="stat-info">
+                    <h3>Actividades Asignadas</h3>
+                    <p th:text="${actividadesAsignadas}">0</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="charts-section">
+            <div class="row">
+                <!-- First Chart - Pie Chart -->
+                <div class="col-md-6 mb-4">
+                    <div class="chart-card">
+                        <h2>Estado de Actividades</h2>
+                        <div class="chart-container">
+                            <canvas id="actividadesPieChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Second Chart - Bar Chart -->
+                <div class="col-md-6 mb-4">
+                    <div class="chart-card">
+                        <h2>Distribución de Actividades</h2>
+                        <div class="chart-container">
+                            <canvas id="actividadesBarChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+
+        <!-- Proyectos recientes con datos reales -->
+        <div class="recent-section">
+            <h2>Proyectos Recientes</h2>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Descripción</th>
+                        <th>Fecha de inicio</th>
+                        <th>Acciones</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:if="${proyectosRecientes.empty}">
+                        <td colspan="5" class="text-center">No hay proyectos registrados</td>
+                    </tr>
+                    <tr th:each="proyecto : ${proyectosRecientes}">
+                        <td th:text="${proyecto.nombre}">Nombre del proyecto</td>
+                        <td th:text="${#strings.abbreviate(proyecto.descripcion, 50)}">Descripción breve...</td>
+                        <td th:text="${#dates.format(proyecto.fechaInicio, 'dd/MM/yyyy')}">01/01/2023</td>
+
+                        <td>
+                            <a th:href="@{/lider/Proyectos/detalle/{id}(id=${proyecto.id})}" class="btn-action">
+                                <i class="fa-solid fa-eye"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="view-all">
+                <a href="/lider/Proyectos" class="btn-view-all">Ver todos los proyectos</a>
+            </div>
+        </div>
+
+
+
+
+    </div>
+</section>
+
+<!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="footer-content">
+            <div class="footer-logo">
+                <img th:src="@{/img/logo.png}" alt="IKernell Logo">
+                <h3>IKernell Soluciones Software</h3>
+                <p>Automatizamos y optimizamos los procesos de tu empresa con soluciones personalizadas.</p>
+            </div>
+            <div class="social-icons">
+                <a href="#"><i class="fab fa-facebook"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-linkedin"></i></a>
+                <a href="#"><i class="fab fa-github"></i></a>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 IKernell Soluciones Software. Todos los derechos reservados.</p>
+                <p><a href="#">Política de Privacidad</a> | <a href="#">Términos de Servicio</a></p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<div th:insert="~{fragments/contact_buttons :: contact-buttons}"></div>
+
+<!-- Scripts -->
+<!-- Scripts JavaScript -->
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script th:inline="javascript">
+    document.addEventListener("DOMContentLoaded", function() {
+        // Get the data from Thymeleaf variables
+        const pendientes = [[${actividadesPendientes}]];
+        const enProceso = [[${actividadesEnProceso}]];
+        const completadas = [[${actividadesCompletadas}]];
+        const total = pendientes + enProceso + completadas;
+
+        // Colors
+        const colors = {
+            pendientes: {
+                background: '#d62c08',
+                border: '#d62c08'
+            },
+            enProceso: {
+                background: '#088bd6',
+                border: '#088bd6'
+            },
+            completadas: {
+                background: '#09d54d',
+                border: '#09d54d'
+            }
+        };
+
+        // Pie Chart
+        const ctxPie = document.getElementById('actividadesPieChart').getContext('2d');
+        new Chart(ctxPie, {
+            type: 'doughnut',  // Changed to doughnut for better appearance
+            data: {
+                labels: ['Pendientes', 'En Proceso', 'Completadas'],
+                datasets: [{
+                    data: [pendientes, enProceso, completadas],
+                    backgroundColor: [
+                        colors.pendientes.background,
+                        colors.enProceso.background,
+                        colors.completadas.background
+                    ],
+                    borderColor: [
+                        colors.pendientes.border,
+                        colors.enProceso.border,
+                        colors.completadas.border
+                    ],
+                    borderWidth: 2,
+                    hoverOffset: 10
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '65%',  // Doughnut hole size
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            padding: 15,
+                            usePointStyle: true,
+                            pointStyle: 'circle'
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const label = context.label || '';
+                                const value = context.raw || 0;
+                                const percentage = Math.round((value / total) * 100);
+                                return `${label}: ${value} (${percentage}%)`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Bar Chart
+        const ctxBar = document.getElementById('actividadesBarChart').getContext('2d');
+        new Chart(ctxBar, {
+            type: 'bar',
+            data: {
+                labels: ['Pendientes', 'En Proceso', 'Completadas'],
+                datasets: [{
+                    label: 'Número de Actividades',
+                    data: [pendientes, enProceso, completadas],
+                    backgroundColor: [
+                        colors.pendientes.background,
+                        colors.enProceso.background,
+                        colors.completadas.background
+                    ],
+                    borderColor: [
+                        colors.pendientes.border,
+                        colors.enProceso.border,
+                        colors.completadas.border
+                    ],
+                    borderWidth: 2,
+                    borderRadius: 5,
+                    maxBarThickness: 80
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            display: true,
+                            drawBorder: false,
+                            color: '#f2f2f2'
+                        },
+                        ticks: {
+                            precision: 0
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    }
+                },
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const label = context.dataset.label || '';
+                                const value = context.raw || 0;
+                                const percentage = Math.round((value / total) * 100);
+                                return `${label}: ${value} (${percentage}%)`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    });
+
+</script>
+
+
+</body>
+</html>
